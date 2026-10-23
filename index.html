@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<!--
+  UFindGo, page de présentation
+  © 2026 Shams Guettaf, Anthropotech Lab. Tous droits réservés.
+  Voir LICENSE : reproduction et réutilisation interdites sans autorisation écrite.
+  Polices tierces sous licence SIL OFL 1.1 (voir fonts/OFL.txt).
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UFindGo, la carte collaborative des places libres</title>
+<meta name="description" content="UFindGo est une carte collaborative : chacun signale les places libres qu'il voit, tout le monde en profite en temps réel. Gratuit, sans compte, sans publicité, signalements anonymes effacés en 24 heures.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#121614">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="UFindGo, Anthropotech Lab">
+<meta property="og:title" content="UFindGo, la carte collaborative des places libres">
+<meta property="og:description" content="Trouvez une place. Aidez les autres. Gratuit, sans compte, signalements anonymes.">
+<meta property="og:url" content="https://shamsetdean.github.io/ufindgo-presentation/">
+<meta property="og:image" content="https://shamsetdean.github.io/ufindgo-presentation/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="UFindGo, Anthropotech Lab : trouvez une place, aidez les autres">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="UFindGo, la carte collaborative des places libres">
+<meta name="twitter:description" content="Trouvez une place. Aidez les autres.">
+<meta name="twitter:image" content="https://shamsetdean.github.io/ufindgo-presentation/og-image.png">
+<link rel="preload" as="font" type="font/woff2" href="fonts/big-shoulders-display.woff2" crossorigin>
+<link rel="preload" as="image" href="images/04-carte.webp">
+<script>
+document.documentElement.classList.add('js');
+/* Aucun stockage dans le navigateur : l'ecran d'accueil est simplement saute
+   lors d'un retour arriere, d'un lien vers une section, ou en venant d'une autre page du site. */
+(function(){
+  var skip = !!location.hash;
+  try{
+    var nav = performance.getEntriesByType('navigation')[0];
+    if(nav && nav.type === 'back_forward') skip = true;
+    if(document.referrer && new URL(document.referrer).origin === location.origin) skip = true;
+  }catch(e){}
+  document.documentElement.classList.add(skip ? 'no-splash' : 'splash-on');
+})();
+</script>
+<style>
+/* Polices hebergees localement (licence SIL OFL 1.1, voir fonts/OFL.txt) : aucune requete externe */
+@font-face{font-family:"Big Shoulders Display";src:url(fonts/big-shoulders-display.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Figtree";src:url(fonts/figtree.woff2) format("woff2");font-weight:300 900;font-display:swap}
+@font-face{font-family:"Martian Mono";src:url(fonts/martian-mono.woff2) format("woff2");font-weight:100 800;font-display:swap}
+
+:root{
+  --asphalt:#121614;
+  --asphalt2:#1b211e;
+  --asphalt3:#252c28;
+  --chalk:#eef2ef;
+  --chalk2:#dfe6e1;
+  --text:#f2f5f3;
+  --dim:rgba(242,245,243,.62);
+  --ink:#121614;
+  --inkdim:#4f5b55;
+  --green:#22c55e;
+  --green2:#16a34a;
+  --lane:#ffd23f;
+  --red:#ef4444;
+  --sky:#38bdf8;
+  --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Martian Mono",ui-monospace,"SF Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--asphalt)}
+body{font-family:var(--sans);background:var(--asphalt);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+.g{color:var(--green)}
+.y{color:var(--lane)}
+
+/* Ecran d'accueil : une epingle tombe, l'onde se propage */
+html.splash-on,html.splash-on body{overflow:hidden}
+.no-splash #splash{display:none}
+#splash{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;cursor:pointer;background:var(--asphalt);transition:opacity .7s ease,visibility .7s ease}
+#splash.out{opacity:0;visibility:hidden}
+#splash .spot{position:relative;width:120px;height:120px}
+#splash .ring{position:absolute;left:50%;top:70%;width:20px;height:8px;margin:-4px 0 0 -10px;border-radius:50%;border:2px solid var(--green);opacity:0;animation:ring 1.6s ease-out .75s infinite}
+#splash .ring:nth-child(2){animation-delay:1.15s}
+#splash .drop{position:absolute;left:50%;top:0;width:56px;height:75px;margin-left:-28px;transform:translateY(-140px);opacity:0;animation:drop .75s cubic-bezier(.3,1.5,.6,1) .1s forwards}
+#splash h2{font-family:var(--display);font-weight:800;font-size:clamp(3rem,10vw,4.4rem);letter-spacing:.01em;line-height:1;margin-top:18px;opacity:0;animation:up .7s ease .7s forwards}
+#splash p{margin-top:10px;color:var(--dim);font-size:.98rem;opacity:0;animation:up .7s ease 1.05s forwards}
+@keyframes drop{to{opacity:1;transform:none}}
+@keyframes ring{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(7)}}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* Navigation */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;height:56px;background:rgba(18,22,20,.76);backdrop-filter:saturate(160%) blur(16px);-webkit-backdrop-filter:saturate(160%) blur(16px);border-bottom:1px solid rgba(242,245,243,.08);transition:background .35s,color .35s}
+.nav.light{background:rgba(238,242,239,.85);color:var(--ink);border-color:rgba(18,22,20,.1)}
+.nav .in{max-width:1200px;margin:0 auto;height:100%;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:9px;text-decoration:none}
+.brand svg{width:22px;height:22px}
+.brand b{font-family:var(--display);font-weight:800;font-size:1.45rem;letter-spacing:.02em}
+.brand small{font-family:var(--mono);font-size:.62rem;opacity:.55}
+.nav ul{display:flex;gap:26px;list-style:none}
+.nav ul a{font-size:.85rem;text-decoration:none;opacity:.72}
+.nav ul a:hover{opacity:1}
+.pill{display:inline-block;background:var(--green);color:#06210f;text-decoration:none;font-size:.82rem;font-weight:700;padding:8px 16px;border-radius:999px}
+.pill:hover{background:#4ade80}
+@media (max-width:860px){.nav ul{display:none}.brand small{display:none}}
+
+/* Briques communes */
+.pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.k{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--lane)}
+.light .k{color:var(--green2)}
+.h{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.92}
+.phone{position:relative;width:100%;aspect-ratio:390/844;border-radius:13.5%/6.3%;padding:3.2%;background:linear-gradient(145deg,#2a312d,#0b0e0c);box-shadow:0 40px 90px rgba(0,0,0,.55),inset 0 0 0 1.5px rgba(255,255,255,.08)}
+.phone .scr{position:relative;width:100%;height:100%;border-radius:10.5%/4.9%;overflow:hidden;background:#000}
+.phone .scr img{width:100%;height:100%;object-fit:cover}
+.phone::after{content:"";position:absolute;left:50%;top:2.6%;width:28%;height:3.2%;margin-left:-14%;border-radius:20px;background:#050605}
+.light{background:var(--chalk);color:var(--ink)}
+.lanes{background-image:linear-gradient(90deg,transparent calc(50% - 3px),var(--lane) calc(50% - 3px),var(--lane) calc(50% + 3px),transparent calc(50% + 3px));}
+
+/* Hero */
+.hero{height:260vh;position:relative;background:var(--asphalt)}
+.hero .pin{display:flex;align-items:center}
+.road{position:absolute;inset:0;pointer-events:none;
+  background:
+    repeating-linear-gradient(180deg,rgba(255,210,63,.9) 0 70px,transparent 70px 150px) 61.5% calc(var(--p,0)*-900px)/6px 150px repeat-y,
+    repeating-linear-gradient(180deg,rgba(242,245,243,.22) 0 70px,transparent 70px 150px) 99% calc(var(--p,0)*-900px)/6px 150px repeat-y;
+  opacity:.55}
+.road::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 70% 50%,rgba(34,197,94,.12),transparent 70%)}
+.hero-grid{position:relative;width:100%;max-width:1200px;margin:0 auto;padding:70px 28px 0;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(5.5rem,15vw,12.5rem);margin:14px 0 18px;opacity:calc(1 - var(--p,0)*1.6);transform:translateX(calc(var(--p,0)*-60px))}
+.hero h1 span{color:var(--green)}
+.hero .sub{font-size:clamp(1.15rem,2vw,1.4rem);color:var(--dim);max-width:30ch;opacity:calc(1 - var(--p,0)*1.8)}
+.hero .sub b{color:var(--text)}
+.hero .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;opacity:calc(1 - var(--p,0)*2)}
+.hero .badges span{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border:1px solid rgba(242,245,243,.18);border-radius:4px;color:var(--dim)}
+.hero-phone{position:relative;width:min(330px,72vw);margin:0 auto;perspective:1400px}
+.hero-phone .phone{transform:rotateX(calc((1 - var(--pp,0))*28deg)) rotateZ(calc((1 - var(--pp,0))*-10deg)) translateY(calc((1 - var(--pp,0))*40px)) scale(calc(.92 + var(--pp,0)*.08));transform-origin:50% 80%;will-change:transform}
+.radar{position:absolute;left:50%;top:46%;width:0;height:0;pointer-events:none}
+.radar i{position:absolute;left:-160px;top:-160px;width:320px;height:320px;border-radius:50%;border:2px solid rgba(34,197,94,.5);opacity:0;animation:radar 3s ease-out infinite}
+.radar i:nth-child(2){animation-delay:1s}.radar i:nth-child(3){animation-delay:2s}
+@keyframes radar{0%{transform:scale(.3);opacity:.8}100%{transform:scale(1.9);opacity:0}}
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:10px;padding-top:66px;text-align:center}
+  .hero h1{font-size:5.4rem;margin:8px 0 8px}
+  .hero .sub{margin:0 auto;font-size:1.05rem}
+  .hero .badges{justify-content:center;margin-top:12px}
+  .hero-phone{width:min(220px,56vw)}
+}
+
+/* Le constat : deux lignes qui roulent */
+.drive{padding:120px 0 130px;overflow:hidden}
+.line{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(4rem,13vw,11rem);line-height:.95;white-space:nowrap;will-change:transform}
+.line.l1{transform:translateX(calc(10% - var(--d,0)*45%))}
+.line.l2{transform:translateX(calc(-55% + var(--d,0)*45%));color:transparent;-webkit-text-stroke:2px rgba(242,245,243,.4)}
+.line .g{-webkit-text-stroke:0}
+.drive p{max-width:760px;margin:60px auto 0;padding:0 24px;font-size:clamp(1.2rem,2.4vw,1.6rem);line-height:1.5;color:var(--dim)}
+.drive p b{color:var(--text)}
+
+/* Le geste */
+.gesture{height:380vh;position:relative;background:var(--asphalt2)}
+.gesture .pin{display:flex;align-items:center}
+.ge-grid{width:100%;max-width:1150px;margin:0 auto;padding:70px 28px 10px;display:grid;grid-template-columns:1fr minmax(240px,330px);gap:70px;align-items:center}
+.ge-h{font-size:clamp(2.8rem,6vw,5rem);margin:10px 0 28px}
+.steps{list-style:none;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:start;padding:14px 16px;border-radius:12px;border:1px solid transparent;opacity:.35;transition:opacity .4s,background .4s,border-color .4s}
+.steps li.on{opacity:1;background:rgba(34,197,94,.07);border-color:rgba(34,197,94,.3)}
+.steps li.done{opacity:.6}
+.steps .n{font-family:var(--display);font-weight:900;font-size:3rem;line-height:.9;color:var(--green)}
+.steps strong{display:block;font-size:1.1rem;margin-bottom:3px}
+.steps p{color:var(--dim);font-size:.95rem}
+.ge-phone{position:relative}
+.ov{position:absolute;pointer-events:none;transition:opacity .45s ease,transform .45s ease;opacity:0}
+.ov.tap{left:85.5%;top:89.5%;width:0;height:0}
+.ov.tap i{position:absolute;left:-30px;top:-30px;width:60px;height:60px;border-radius:50%;border:3px solid #fff;animation:tap 1.2s ease-out infinite}
+.ov.tap i:nth-child(2){animation-delay:.4s}
+@keyframes tap{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.7);opacity:0}}
+.ov.hex{left:31%;top:25%;width:38%;transform:scale(.6)}
+.ov.hex svg{width:100%;height:auto;filter:drop-shadow(0 0 18px rgba(34,197,94,.9))}
+.ov.hex b{position:absolute;left:50%;top:104%;transform:translateX(-50%);white-space:nowrap;font-size:.72rem;font-weight:800;background:var(--green);color:#052e14;padding:4px 9px;border-radius:999px}
+.ov.cars{inset:0}
+.ov.cars span{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:#fff;color:var(--green2);display:grid;place-items:center;box-shadow:0 6px 16px rgba(0,0,0,.4);transition:left 1.4s cubic-bezier(.3,.7,.2,1),top 1.4s cubic-bezier(.3,.7,.2,1)}
+.ov.cars span svg{width:15px;height:15px}
+.ov.cars .c1{left:6%;top:12%}.ov.cars .c2{left:92%;top:30%}.ov.cars .c3{left:12%;top:62%}
+.ov.plus{left:50%;top:6%;transform:translate(-50%,-10px);background:rgba(18,22,20,.9);border:1px solid rgba(34,197,94,.5);color:var(--text);padding:8px 12px;border-radius:12px;font-size:.8rem;white-space:nowrap}
+.ov.plus b{color:var(--green)}
+.g0 .tap{opacity:1}
+.g1 .tap,.g1 .hex,.g2 .hex{opacity:1;transform:none}
+.g2 .cars,.g2 .plus{opacity:1}
+.g2 .plus{transform:translate(-50%,0)}
+.g2 .cars .c1{left:42%;top:30%}.g2 .cars .c2{left:58%;top:28%}.g2 .cars .c3{left:47%;top:38%}
+@media (max-width:860px){
+  .ge-grid{grid-template-columns:1fr;gap:14px;padding:64px 16px 10px}
+  .ge-h{font-size:2.3rem;margin:4px 0 6px}
+  .steps li{display:none;padding:6px 8px}
+  .steps li.on{display:grid}
+  .steps .n{font-size:2.2rem}
+  .ge-phone{width:min(210px,50svh*.46);margin:0 auto;order:-1}
+}
+
+/* Lieux : l'eventail */
+.fan{height:250vh;position:relative}
+.fan .pin{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 20px 0}
+.fan .h{font-size:clamp(2.2rem,4.6vw,3.8rem);text-align:center;margin:8px 0 10px}
+.fan .lead{color:var(--dim);text-align:center;max-width:62ch;margin:0 auto 26px;font-size:1rem}
+.deck{position:relative;width:min(190px,24vw,22svh);aspect-ratio:390/844;margin:0 auto}
+.deck figure{position:absolute;inset:0;transition:none;will-change:transform}
+.deck figcaption{position:absolute;left:50%;top:103%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--lane);opacity:var(--f,0)}
+.deck .f1{transform:translateX(calc(var(--f,0)*-118%)) rotate(calc(var(--f,0)*-7deg)) translateY(calc(var(--f,0)*24px))}
+.deck .f3{transform:translateX(calc(var(--f,0)*118%)) rotate(calc(var(--f,0)*7deg)) translateY(calc(var(--f,0)*24px))}
+.deck .f2{z-index:2}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:900px;margin:52px auto 0}
+.chips span{font-size:.82rem;padding:6px 12px;border-radius:999px;background:var(--asphalt3);color:var(--dim)}
+@media (max-width:860px){.road{display:none}.deck{width:min(140px,28vw,20svh)}.deck figcaption{display:none}.fan .lead{margin-bottom:20px;font-size:.95rem}.chips{margin-top:46px}.chips span{font-size:.72rem}}
+
+/* Realite augmentee */
+.ar{height:260vh;position:relative;background:#0b0f1a}
+.ar .pin{display:flex;align-items:center}
+.ar-grid{width:100%;max-width:1200px;margin:0 auto;padding:70px 28px 10px;display:grid;grid-template-columns:minmax(260px,.75fr) 1.25fr;gap:56px;align-items:center}
+.ar .h{font-size:clamp(2.6rem,5.6vw,4.6rem);margin:10px 0 18px}
+.ar p{color:var(--dim);font-size:1.04rem;max-width:40ch}
+.ar ul{list-style:none;margin-top:18px;display:grid;gap:8px}
+.ar li{display:flex;gap:10px;align-items:center;font-size:.95rem}
+.ar li svg{flex:none;width:18px;height:18px;color:var(--sky)}
+.view{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/3;border:1px solid rgba(255,255,255,.12);box-shadow:0 40px 90px rgba(0,0,0,.5)}
+.view svg{width:100%;height:100%;display:block}
+.view .far{transform:translateX(calc((var(--a,0) - .5)*-30px))}
+.view .near{transform:translateX(calc((var(--a,0) - .5)*-80px))}
+.view .tagv{transform:translateX(calc((var(--a,0) - .5)*-120px))}
+.view .lbl{position:absolute;left:14px;top:14px;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.55);padding:4px 8px;border-radius:4px;color:var(--dim)}
+@media (max-width:860px){.ar-grid{grid-template-columns:1fr;gap:20px;padding:66px 16px 10px}.ar .h{font-size:2.2rem}.ar p{font-size:.95rem}.ar ul{display:none}}
+
+/* Securite */
+.safety{position:relative;padding:120px 24px 130px;background:var(--asphalt)}
+.safety::before,.safety::after{content:"";position:absolute;left:0;right:0;height:18px;background:repeating-linear-gradient(-45deg,var(--lane) 0 18px,#111 18px 36px)}
+.safety::before{top:0}.safety::after{bottom:0}
+.sa-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:70px;align-items:center}
+.safety .h{font-size:clamp(3rem,7vw,6rem);margin:10px 0 20px}
+.safety .h span{color:var(--lane)}
+.rules{display:grid;gap:12px;margin-top:26px}
+.rule{display:grid;grid-template-columns:54px 1fr;gap:16px;align-items:center;padding:16px 18px;border-radius:12px;background:var(--asphalt2)}
+.rule .sign{width:54px;height:54px;display:grid;place-items:center}
+.rule .sign svg{width:54px;height:54px}
+.rule strong{display:block;font-size:1.05rem;margin-bottom:2px}
+.rule p{color:var(--dim);font-size:.92rem}
+@media (max-width:860px){.sa-grid{grid-template-columns:1fr;gap:40px}.sa-grid .phone-wrap{width:min(230px,60vw);margin:0 auto}}
+
+/* Donnees */
+.data{padding:130px 24px 140px}
+.da-grid{max-width:1150px;margin:0 auto;display:grid;grid-template-columns:1fr minmax(220px,290px);gap:70px;align-items:center}
+.data .h{font-size:clamp(2.8rem,6vw,5rem);margin:10px 0 16px}
+.data .lead{color:var(--inkdim);font-size:1.06rem;max-width:52ch;margin-bottom:34px}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);border-top:3px solid var(--ink)}
+.num{padding:20px 16px 18px 0;border-right:1px solid rgba(18,22,20,.12)}
+.num:last-child{border-right:0}
+.num strong{display:block;font-family:var(--display);font-weight:900;font-size:clamp(3rem,6vw,4.6rem);line-height:.9;color:var(--green2)}
+.num span{display:block;margin-top:8px;font-size:.88rem;color:var(--inkdim)}
+.checks{list-style:none;margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+.checks li{display:flex;gap:10px;font-size:.95rem;align-items:flex-start}
+.checks svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--green2)}
+.data .note{margin-top:26px;font-size:.88rem;color:var(--inkdim);border-left:3px solid var(--lane);padding-left:12px;max-width:62ch}
+@media (max-width:860px){.da-grid{grid-template-columns:1fr;gap:44px}.da-grid .phone-wrap{width:min(230px,60vw);margin:0 auto}.nums{grid-template-columns:1fr}.num{border-right:0;border-bottom:1px solid rgba(18,22,20,.12)}.checks{grid-template-columns:1fr}}
+
+/* Chiffres : panneaux */
+.signs{padding:120px 24px 130px;text-align:center;background:var(--asphalt2)}
+.signs .h{font-size:clamp(2.6rem,6vw,4.6rem);margin:10px 0 0}
+.srow{max-width:900px;margin:60px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.sgn{display:flex;flex-direction:column;align-items:center;gap:16px}
+.disc{width:min(190px,40vw);aspect-ratio:1;border-radius:50%;background:#fff;border:clamp(14px,2.6vw,22px) solid var(--c);display:grid;place-items:center;color:#111;box-shadow:0 20px 40px rgba(0,0,0,.4)}
+.disc strong{font-family:var(--display);font-weight:900;font-size:clamp(3.6rem,8vw,5.6rem);line-height:1}
+.disc strong small{font-size:.45em}
+.sgn span{color:var(--dim);font-size:1rem}
+.js .sgn .disc{transform:rotateY(90deg);transition:transform .8s cubic-bezier(.3,1.3,.5,1)}
+.js .sgn.in .disc{transform:none}
+.sgn:nth-child(2) .disc{transition-delay:.12s}.sgn:nth-child(3) .disc{transition-delay:.24s}
+@media (max-width:700px){.srow{grid-template-columns:1fr;gap:40px}}
+
+/* Final : on se gare */
+.final{text-align:center;padding:110px 24px 140px;background:var(--asphalt)}
+.lot{width:min(560px,92vw);height:auto;margin:0 auto 40px;display:block;overflow:visible}
+.lot .car{transform:translateY(calc((1 - var(--k,0))*-150px))}
+.lot .bay{transition:fill .4s}
+.final.parked .lot .bay{fill:rgba(34,197,94,.25)}
+.final .h{font-size:clamp(3rem,7vw,6rem);margin:12px auto 20px;max-width:20ch}
+.final p{color:var(--dim);font-size:1.1rem;max-width:46ch;margin:0 auto 34px}
+.btn{display:inline-block;background:var(--green);color:#06210f;text-decoration:none;font-weight:800;padding:15px 30px;border-radius:999px;font-size:1.02rem;transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-2px);background:#4ade80}
+.btn.ghost{background:transparent;border:1px solid rgba(242,245,243,.22);color:var(--text);margin-left:12px}
+.beta{display:inline-block;margin-top:26px;font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--lane);border:1px dashed rgba(255,210,63,.5);padding:6px 12px;border-radius:4px}
+@media (max-width:480px){.btn.ghost{margin:12px 0 0}}
+
+footer{background:#0b0e0c;color:rgba(242,245,243,.55);padding:36px 24px 56px;font-size:.82rem}
+footer .in{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 40px;justify-content:space-between}
+footer p{max-width:62ch}
+footer strong{color:var(--text);font-family:var(--display);font-weight:800;font-size:1.1em;letter-spacing:.02em}
+
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .85s ease,transform .85s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  #splash *{animation:none!important;opacity:1!important;transform:none!important}
+  .hero,.gesture,.fan,.ar{height:auto}
+  .pin{position:static;height:auto;overflow:visible}
+  .hero .pin,.gesture .pin,.fan .pin,.ar .pin{padding:100px 0 60px}
+  .hero h1,.hero .sub,.hero .badges{opacity:1;transform:none}
+  .hero-phone .phone{transform:none}
+  .radar,.road{display:none}
+  .line.l1,.line.l2{transform:none;white-space:normal}
+  .steps li{opacity:1;display:grid}
+  .deck{width:auto;aspect-ratio:auto;display:flex;flex-wrap:wrap;gap:30px;justify-content:center}
+  .deck figure{position:static;width:220px;transform:none!important}
+  .deck figcaption{position:static;transform:none;opacity:1;margin-top:10px;text-align:center}
+  .view .far,.view .near,.view .tagv{transform:none}
+  .js .rv,.js .sgn .disc{opacity:1;transform:none}
+  .lot .car{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div id="splash" role="presentation" aria-hidden="true">
+  <div class="spot"><i class="ring"></i><i class="ring"></i>
+    <svg class="drop" viewBox="0 0 48 64"><path d="M24 2C12 2 3 11 3 23c0 15 21 37 21 37s21-22 21-37C45 11 36 2 24 2z" fill="#22c55e"/><circle cx="24" cy="23" r="8" fill="#121614"/></svg>
+  </div>
+  <h2>UFind<span class="g">Go</span></h2>
+  <p>bâtir par soi-même ce qu'on rêve de voir exister</p>
+</div>
+
+<nav class="nav" aria-label="Navigation principale">
+  <div class="in">
+    <a class="brand" href="#haut">
+      <svg viewBox="0 0 48 64" aria-hidden="true"><path d="M24 2C12 2 3 11 3 23c0 15 21 37 21 37s21-22 21-37C45 11 36 2 24 2z" fill="#22c55e"/><circle cx="24" cy="23" r="8" fill="#121614"/></svg>
+      <b>UFind<span class="g">Go</span></b><small>anthropotech /lab</small>
+    </a>
+    <ul>
+      <li><a href="#geste">Le geste</a></li>
+      <li><a href="#lieux">Lieux</a></li>
+      <li><a href="#securite">Sécurité</a></li>
+      <li><a href="#donnees">Données</a></li>
+    </ul>
+    <a class="pill" href="https://shamsetdean.github.io/vacuum/" rel="noopener">Ouvrir UFindGo</a>
+  </div>
+</nav>
+
+<main id="haut">
+
+<!-- Hero -->
+<section class="hero" data-scene="hero" aria-label="Présentation de UFindGo">
+  <div class="pin">
+    <div class="road" aria-hidden="true"></div>
+    <div class="hero-grid">
+      <div>
+        <p class="k">Carte collaborative · temps réel · bêta</p>
+        <h1 class="h">UFind<span>Go</span></h1>
+        <p class="sub"><b>Trouvez une place. Aidez les autres.</b> Chacun signale les places libres qu'il voit, tout le monde en profite.</p>
+        <div class="badges"><span>Gratuit</span><span>Sans compte</span><span>Sans publicité</span><span>Anonyme</span></div>
+      </div>
+      <div class="hero-phone">
+        <div class="radar" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="phone"><div class="scr"><img src="images/04-carte.webp" width="780" height="1688" alt="La carte de UFindGo dans une ville fictive, avec la position de l'utilisateur et les zones signalées" fetchpriority="high"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Le constat -->
+<section class="drive" data-drive aria-label="Le constat">
+  <div class="line l1" aria-hidden="true">On tourne. <span class="g">On cherche.</span></div>
+  <div class="line l2" aria-hidden="true">On tourne encore. <span class="g">On cherche.</span></div>
+  <p class="rv">Une place se libère à deux rues d'ici, et personne ne le sait. <b>UFindGo fait de chaque passant un éclaireur :</b> celui qui voit une place libre la signale d'un geste, et elle s'allume sur la carte de tous ceux qui cherchent autour.</p>
+</section>
+
+<!-- Le geste -->
+<section class="gesture" id="geste" data-scene="gesture" aria-label="Le geste">
+  <div class="pin">
+    <div class="ge-grid">
+      <div>
+        <p class="k">Le geste</p>
+        <h2 class="h ge-h">Un appui.<br><span class="g">Une place partagée.</span></h2>
+        <ol class="steps">
+          <li class="on"><span class="n">1</span><div><strong>Vous voyez une place libre</strong><p>Vous la quittez, ou vous en apercevez une en passant. Un appui sur le bouton vert suffit.</p></div></li>
+          <li><span class="n">2</span><div><strong>La zone s'allume</strong><p>Le quartier de la place s'illumine sur la carte. Seule une position arrondie est partagée, sans aucun nom.</p></div></li>
+          <li><span class="n">3</span><div><strong>Les autres la voient</strong><p>Ceux qui cherchent autour la voient apparaître en temps réel et peuvent s'y faire guider. Le signalement reste affiché cinq minutes.</p></div></li>
+        </ol>
+      </div>
+      <div class="ge-phone g0" id="gephone">
+        <div class="phone"><div class="scr"><img src="images/04-carte.webp" width="780" height="1688" alt="La carte de UFindGo avec le bouton Place libre" loading="lazy"></div></div>
+        <div class="ov tap" aria-hidden="true"><i></i><i></i></div>
+        <div class="ov hex" aria-hidden="true"><svg viewBox="0 0 100 90"><path d="M25 2 H75 L98 45 L75 88 H25 L2 45 Z" fill="rgba(34,197,94,.45)" stroke="#22c55e" stroke-width="4"/></svg><b>Place libre</b></div>
+        <div class="ov cars" aria-hidden="true">
+          <span class="c1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/></svg></span>
+          <span class="c2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/></svg></span>
+          <span class="c3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11v6a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/></svg></span>
+        </div>
+        <div class="ov plus" aria-hidden="true"><b>Place libre</b> signalée à 60 m</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lieux -->
+<section class="fan" id="lieux" data-scene="fan" aria-label="Lieux et itinéraires">
+  <div class="pin">
+    <p class="k">Autour de vous</p>
+    <h2 class="h">Plus qu'une place.<br><span class="y">Tout ce qui compte, à côté.</span></h2>
+    <p class="lead">Pharmacie, distributeur, toilettes, borne de recharge : UFindGo liste les lieux utiles à proximité, avec la distance à pied, et trace l'itinéraire en un geste.</p>
+    <div class="deck">
+      <figure class="f1"><div class="phone"><div class="scr"><img src="images/05-lieux.webp" width="780" height="1688" alt="La liste des lieux à proximité avec leur catégorie et leur distance" loading="lazy"></div></div><figcaption>Choisir un lieu</figcaption></figure>
+      <figure class="f2"><div class="phone"><div class="scr"><img src="images/06-itineraire.webp" width="780" height="1688" alt="L'itinéraire vers une pharmacie tracé sur la carte, avec la prochaine direction" loading="lazy"></div></div><figcaption>Suivre l'itinéraire</figcaption></figure>
+      <figure class="f3"><div class="phone"><div class="scr"><img src="images/07-signalements.webp" width="780" height="1688" alt="Le panneau Mes signalements avec les points, le nombre de signalements et les lieux visités" loading="lazy"></div></div><figcaption>Voir sa contribution</figcaption></figure>
+    </div>
+    <div class="chips" aria-label="Catégories de lieux">
+      <span>Pharmacies</span><span>Commissariats</span><span>Distributeurs</span><span>Hôpitaux</span><span>Supermarchés</span><span>Restaurants</span><span>Cafés</span><span>Musées</span><span>Parkings</span><span>Toilettes</span><span>Bornes électriques</span><span>Transports</span><span>Essence</span><span>Eau potable</span><span>Bancs</span>
+    </div>
+  </div>
+</section>
+
+<!-- Realite augmentee -->
+<section class="ar" data-scene="ar" aria-label="La vue en réalité augmentée">
+  <div class="pin">
+    <div class="ar-grid">
+      <div>
+        <p class="k" style="color:var(--sky)">Réalité augmentée</p>
+        <h2 class="h">Levez le téléphone.<br><span style="color:var(--sky)">La rue vous répond.</span></h2>
+        <p>La caméra filme la rue, et UFindGo y superpose les places signalées et les lieux choisis, avec leur distance et la direction à prendre.</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>Guidage vocal : « tournez à droite », « tout droit »</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>L'écran reste allumé pendant le guidage</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>Retour à la carte d'un seul geste</li>
+        </ul>
+      </div>
+      <div class="view">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1e2a4a"/><stop offset="1" stop-color="#3b3f5c"/></linearGradient>
+            <linearGradient id="rd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2f35"/><stop offset="1" stop-color="#15181b"/></linearGradient>
+          </defs>
+          <rect width="400" height="300" fill="url(#sky)"/>
+          <g class="far">
+            <path d="M-20 160 V70 H40 V60 H80 V160 Z M80 160 V90 H120 V160 Z" fill="#283048"/>
+            <path d="M300 160 V80 H340 V55 H380 V160 Z M380 160 V95 H430 V160 Z" fill="#283048"/>
+            <g fill="#ffd56b" opacity=".6"><rect x="0" y="80" width="6" height="8"/><rect x="18" y="96" width="6" height="8"/><rect x="50" y="76" width="6" height="8"/><rect x="92" y="104" width="6" height="8"/><rect x="315" y="92" width="6" height="8"/><rect x="350" y="70" width="6" height="8"/><rect x="392" y="108" width="6" height="8"/></g>
+          </g>
+          <path d="M150 160 L250 160 L420 300 L-20 300 Z" fill="url(#rd)"/>
+          <path d="M198 165 L202 165 L206 190 L194 190 Z M192 205 L208 205 L214 245 L186 245 Z M182 265 L218 265 L226 300 L174 300 Z" fill="#ffd23f" opacity=".85"/>
+          <g class="near">
+            <path d="M-30 300 V110 L120 160 V230 Z" fill="#1f2638"/>
+            <path d="M430 300 V100 L280 160 V230 Z" fill="#1f2638"/>
+            <g fill="#ffd56b" opacity=".5"><rect x="10" y="150" width="10" height="14"/><rect x="40" y="160" width="10" height="14"/><rect x="70" y="170" width="10" height="14"/><rect x="380" y="146" width="10" height="14"/><rect x="350" y="156" width="10" height="14"/><rect x="320" y="166" width="10" height="14"/></g>
+            <rect x="300" y="215" width="70" height="32" rx="6" fill="#3a4250"/><rect x="306" y="206" width="52" height="14" rx="5" fill="#4a5363"/>
+          </g>
+          <g class="tagv">
+            <g transform="translate(270 128)"><path d="M0 0 L8 10 L-8 10 Z" transform="translate(30 34)" fill="#22c55e"/><rect x="-2" y="0" width="68" height="36" rx="10" fill="#22c55e"/><text x="32" y="15" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="800" font-size="10" fill="#052e14">Place libre</text><text x="32" y="28" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="700" font-size="9" fill="#052e14">60 m</text></g>
+            <g transform="translate(70 96)"><rect x="0" y="0" width="92" height="36" rx="10" fill="rgba(255,255,255,.92)"/><text x="46" y="15" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="800" font-size="10" fill="#111">Pharmacie</text><text x="46" y="28" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="600" font-size="9" fill="#16a34a">138 m · 2 min</text></g>
+          </g>
+          <g transform="translate(200 268)"><rect x="-86" y="-20" width="172" height="34" rx="17" fill="rgba(0,0,0,.6)"/><path d="M-62 -3 h16 v-6 l10 9 -10 9 v-6 h-16z" fill="#38bdf8"/><text x="8" y="2" text-anchor="middle" font-family="Figtree,sans-serif" font-weight="700" font-size="11" fill="#fff">Tournez à droite</text></g>
+        </svg>
+        <span class="lbl">Illustration</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Securite -->
+<section class="safety" id="securite" aria-label="Sécurité routière">
+  <div class="sa-grid">
+    <div class="phone-wrap rv"><div class="phone"><div class="scr"><img src="images/01-securite.webp" width="780" height="1688" alt="L'écran Votre sécurité d'abord, qui rappelle que l'application est réservée aux passagers et aux personnes à l'arrêt" loading="lazy"></div></div></div>
+    <div>
+      <p class="k rv">Sécurité</p>
+      <h2 class="h rv">Jamais<br><span>au volant.</span></h2>
+      <p class="rv" style="color:var(--dim);font-size:1.06rem;max-width:48ch">UFindGo est réservé aux passagers et aux personnes à l'arrêt. L'application le rappelle dès l'ouverture, et elle veille ensuite.</p>
+      <div class="rules">
+        <div class="rule rv"><div class="sign"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="24" fill="#fff" stroke="#ef4444" stroke-width="6"/><path d="M17 31h20M20 31l2-7h10l2 7" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 40L40 14" stroke="#ef4444" stroke-width="5"/></svg></div><div><strong>Une confirmation à l'ouverture</strong><p>Avant toute chose, l'utilisateur confirme qu'il n'est pas le conducteur.</p></div></div>
+        <div class="rule rv"><div class="sign"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="24" fill="#fff" stroke="#ef4444" stroke-width="6"/><text x="27" y="35" text-anchor="middle" font-family="'Big Shoulders Display',sans-serif" font-weight="900" font-size="24" fill="#111">20</text></svg></div><div><strong>Une alerte au-delà de 20 km/h</strong><p>Si la vitesse laisse penser que l'utilisateur conduit, UFindGo l'interrompt et propose de se mettre en pause.</p></div></div>
+        <div class="rule rv"><div class="sign"><svg viewBox="0 0 54 54"><path d="M27 4L51 48H3z" fill="#ffd23f" stroke="#111" stroke-width="3" stroke-linejoin="round"/><path d="M27 20v13" stroke="#111" stroke-width="4" stroke-linecap="round"/><circle cx="27" cy="40" r="2.6" fill="#111"/></svg></div><div><strong>Une vitesse informative</strong><p>Le compteur affiché n'est pas un avertisseur homologué et ne remplace ni la vigilance ni les équipements certifiés.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Donnees -->
+<section class="data light" id="donnees" data-light aria-label="Vos données">
+  <div class="da-grid">
+    <div>
+      <p class="k rv">Vos données</p>
+      <h2 class="h rv">Anonyme. Approximatif.<br><span style="color:var(--green2)">Éphémère.</span></h2>
+      <p class="lead rv">Un signalement dit seulement « une place est libre par ici ». Il ne dit pas qui l'a vue.</p>
+      <div class="nums rv">
+        <div class="num"><strong>≈ 11 m</strong><span>Précision d'un signalement : la position est arrondie avant l'envoi.</span></div>
+        <div class="num"><strong>5 min</strong><span>Durée d'affichage d'un signalement sur la carte des autres.</span></div>
+        <div class="num"><strong>24 h</strong><span>Au plus tard, le signalement est effacé du serveur.</span></div>
+      </div>
+      <ul class="checks">
+        <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Un identifiant tiré au hasard, sans lien avec votre identité</li>
+        <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Votre position n'est partagée avec les autres qu'au moment où vous signalez</li>
+        <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>La photo de profil reste sur votre téléphone</li>
+        <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Un mode local, sans aucun partage</li>
+        <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Un bouton pour effacer toutes vos données</li>
+        <li class="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Aucun compte, aucune publicité, aucun traceur</li>
+      </ul>
+      <p class="note rv">Les signalements partagés transitent par Google Firebase, le service qui les distribue en temps réel. Pour afficher l'adresse, les lieux proches et les itinéraires, l'application interroge les services ouverts d'OpenStreetMap avec votre position.</p>
+    </div>
+    <div class="phone-wrap rv"><div class="phone"><div class="scr"><img src="images/03-donnees.webp" width="780" height="1688" alt="L'écran Vos données, vos choix : géolocalisation, partage anonyme et suivi continu" loading="lazy"></div></div></div>
+  </div>
+</section>
+
+<!-- Chiffres -->
+<section class="signs" aria-label="En chiffres">
+  <p class="k rv">En chiffres</p>
+  <h2 class="h rv">Les règles de la route.</h2>
+  <div class="srow">
+    <div class="sgn rv" style="--c:#ef4444"><div class="disc"><strong data-count="15">0</strong></div><span>catégories de lieux utiles</span></div>
+    <div class="sgn rv" style="--c:#22c55e"><div class="disc"><strong data-count="0">0</strong></div><span>compte à créer</span></div>
+    <div class="sgn rv" style="--c:#38bdf8"><div class="disc"><strong><b data-count="0">0</b><small> €</small></strong></div><span>gratuit et sans publicité</span></div>
+  </div>
+</section>
+
+<!-- Final -->
+<section class="final" data-final aria-label="Ouvrir UFindGo">
+  <svg class="lot" viewBox="0 0 560 210" aria-hidden="true">
+    <rect width="560" height="210" rx="16" fill="#1b211e"/>
+    <g stroke="#f2f5f3" stroke-width="3" opacity=".7"><path d="M20 30 V180 M125 30 V180 M230 30 V180 M335 30 V180 M440 30 V180 M545 30 V180"/></g>
+    <rect class="bay" x="232" y="32" width="101" height="146" fill="rgba(255,210,63,.06)"/>
+    <g fill="#3a4250"><rect x="40" y="55" width="66" height="104" rx="14"/><rect x="145" y="50" width="66" height="104" rx="14"/><rect x="355" y="58" width="66" height="104" rx="14"/><rect x="460" y="52" width="66" height="104" rx="14"/></g>
+    <g fill="#2a313d"><rect x="48" y="70" width="50" height="28" rx="6"/><rect x="153" y="65" width="50" height="28" rx="6"/><rect x="363" y="73" width="50" height="28" rx="6"/><rect x="468" y="67" width="50" height="28" rx="6"/></g>
+    <g class="car"><rect x="250" y="54" width="66" height="104" rx="14" fill="#22c55e"/><rect x="258" y="69" width="50" height="28" rx="6" fill="#0d3b1f"/><rect x="262" y="126" width="42" height="20" rx="5" fill="#0d3b1f"/></g>
+  </svg>
+  <p class="k rv">À vous de jouer</p>
+  <h2 class="h rv">La prochaine place<br><span class="g">est peut-être la vôtre.</span></h2>
+  <p class="rv">UFindGo s'ouvre dans le navigateur du téléphone. Aucune installation, aucun compte : la carte est prête.</p>
+  <div class="rv"><a class="btn" href="https://shamsetdean.github.io/vacuum/" rel="noopener">Ouvrir UFindGo</a><a class="btn ghost" href="#haut">Revenir en haut</a></div>
+  <p class="rv"><span class="beta">Version bêta : en développement actif, comportement susceptible d'évoluer</span></p>
+</section>
+
+</main>
+
+<footer>
+  <div class="in">
+    <p><strong>UFindGo</strong>, projet d'Anthropotech Lab. Conçu et développé par Shams &amp; Dean. Les captures de cette page montrent une ville et des signalements fictifs.</p>
+    <p>&copy; 2026 Shams Guettaf, Anthropotech Lab. Tous droits réservés. Ce site ne dépose aucun cookie, n'enregistre rien dans votre navigateur et n'utilise aucun traceur. <a href="mentions-legales.html">Mentions légales</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clamp = function(v,a,b){ return Math.min(b===undefined?1:b, Math.max(a===undefined?0:a, v)); };
+
+  var rv = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:.2, rootMargin:'0px 0px -6% 0px'});
+    rv.forEach(function(el){ io.observe(el); });
+  } else { rv.forEach(function(el){ el.classList.add('in'); }); }
+
+  var counters = document.querySelectorAll('[data-count]');
+  function runCount(el){
+    var target = +el.getAttribute('data-count'), t0 = null, dur = 1100;
+    if(!target){ el.textContent = '0'; return; }
+    function step(t){ if(t0===null) t0 = t; var k = clamp((t - t0)/dur); el.textContent = Math.round(target*(1 - Math.pow(1-k,3))); if(k<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  if('IntersectionObserver' in window && !reduce){
+    var io2 = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ runCount(e.target); io2.unobserve(e.target); } }); },{threshold:.6});
+    counters.forEach(function(el){ io2.observe(el); });
+  } else { counters.forEach(function(el){ el.textContent = el.getAttribute('data-count'); }); }
+
+  if(reduce) return;
+
+  var nav = document.querySelector('.nav');
+  var lights = document.querySelectorAll('[data-light]');
+  var hero = document.querySelector('[data-scene="hero"]');
+  var drive = document.querySelector('[data-drive]');
+  var gest = document.querySelector('[data-scene="gesture"]'), gph = document.getElementById('gephone'), gsteps = gest.querySelectorAll('.steps li');
+  var fan = document.querySelector('[data-scene="fan"]');
+  var ar = document.querySelector('[data-scene="ar"]');
+  var fin = document.querySelector('[data-final]');
+  var gPhase = -1;
+
+  function pct(el){ var r = el.getBoundingClientRect(); return clamp(-r.top / (r.height - window.innerHeight)); }
+
+  function frame(){
+    var h = window.innerHeight;
+    var p = pct(hero);
+    hero.style.setProperty('--p', p.toFixed(4));
+    hero.style.setProperty('--pp', clamp(p*2.2).toFixed(4));
+
+    var dr = drive.getBoundingClientRect();
+    drive.style.setProperty('--d', clamp((h - dr.top)/(h + dr.height)).toFixed(4));
+
+    var gp = Math.min(2, Math.floor(pct(gest)*3));
+    if(gp !== gPhase){
+      gPhase = gp;
+      gph.className = 'ge-phone g' + gp;
+      gsteps.forEach(function(li,i){ li.classList.toggle('on', i===gp); li.classList.toggle('done', i<gp); });
+    }
+
+    var f = clamp(pct(fan)*1.6 - .1);
+    fan.style.setProperty('--f', (1 - Math.pow(1-f,3)).toFixed(4));
+
+    ar.style.setProperty('--a', pct(ar).toFixed(4));
+
+    var fr = fin.getBoundingClientRect(), k = clamp((h*.95 - fr.top)/(h*.6));
+    fin.style.setProperty('--k', (1 - Math.pow(1-k,3)).toFixed(3));
+    fin.classList.toggle('parked', k > .98);
+
+    var light = false;
+    lights.forEach(function(el){ var r = el.getBoundingClientRect(); if(r.top <= 28 && r.bottom >= 28) light = true; });
+    nav.classList.toggle('light', light);
+  }
+
+  var ticking = false;
+  function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(function(){ frame(); ticking = false; }); } }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  frame();
+})();
+</script>
+<script>
+(function(){
+  var root = document.documentElement, s = document.getElementById('splash');
+  if(!s || !root.classList.contains('splash-on')) return;
+  var done = false;
+  function close(){
+    if(done) return; done = true;
+    s.classList.add('out');
+    root.classList.remove('splash-on');
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 800);
+  }
+  setTimeout(close, 2600);
+  s.addEventListener('click', close);
+  document.addEventListener('keydown', close, {once:true});
+})();
+</script>
+</body>
+</html>
